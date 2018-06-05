@@ -8,7 +8,7 @@ NB: Work in Progress
 
 You'll need a Homey to make much use of this, so assuming you have one, you'll need to load up the Particle App. You can either get that from the Athom App Store (assuming I've successfully published it there - TODO) or you can load it manually using the Athom node.js CLI and grabbing it from github [athom-particledevice](https://github.com/specialcircumstances/athom-particledevice) 
 
-Once the Particle App is setup (see the instructions at [athom-particledevice](https://github.com/specialcircumstances/athom-particledevice) you will need to add this library to your Particle project. The library will be published soon to Particle so should be easy to include in your projects.
+Once the Particle App is setup (see the instructions at [athom-particledevice](https://github.com/specialcircumstances/athom-particledevice) ) you will need to add this library to your Particle project. The library will be published soon to Particle so should be easy to include in your projects.
 
 
 ## Usage
@@ -28,12 +28,13 @@ bool getOnOffCallback() {
 }
 
 int getDimLevel() {
-  return myDimLevel;
+  return myDimLevel;  // You might actually read a sensor or that could be done elsewhere and the result stored
 }
 
 // Your function to adjust something, e.g. a dim level on a light. 
 // Can be int, float or bool. Must accept one value, and return the actual set value
-// parameter and return type must be the same.
+// The parameter and return type MUST be the same.
+// This is a Homey "Set"
 
 bool setOnOffCallack(const bool myNewVal) {
   myOnOff = myNewVal; // or actually do something
@@ -50,19 +51,19 @@ int setDimCallback(const int myNewVal) {
 // and what Homey capabilities each node supports.
 // Then attach the callbacks
 void setup() {
-  myDevice.setName("TESTY");
-  myDevice.addNode("light");
-  myDevice.addCapability(1,"onoff");
-  myDevice.setCapabilityGetCallback(1,"onoff",&getOnOffCallback);
-  myDevice.setCapabilitySetCallback(1,"onoff",&setOnOffCallback);
+  myDevice.setName("TESTY"); // A name, optional
+  myDevice.addNode("light"); // (sub) Nodes are added sequentially, at setup time, specify the class.
+  myDevice.addCapability(1,"onoff");  // Add the "onoff" capability to node 1
+  myDevice.setCapabilityGetCallback(1,"onoff",&getOnOffCallback);   // Pointer to your function to return the value
+  myDevice.setCapabilitySetCallback(1,"onoff",&setOnOffCallback);   // Pointer to your function to set the value
   myDevice.addCapability(1,"dim");
   myDevice.setCapabilityGetCallback(1,"dim",&getDimCallback);
   myDevice.setCapabilitySetCallback(1,"dim",&setDimCallback);
 }
 
+// You can either get Homey to poll your device, or you can manually send reports. You can do both if you like
 void loop() {
-  myDevice.sendReport();  // This will trigger a report of all getable capabilities
-                          // NB, this assumes you don't set Homey to poll
+  myDevice.sendReport();  // This will trigger a report of all getable capabilities.
   delay(60000);           // wait 60 seconds until the next one.
 }
 ```
