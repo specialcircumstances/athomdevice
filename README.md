@@ -1,6 +1,80 @@
 # athomdevice
 
-A Particle library for athomdevice
+A Particle library for simple integration into Athom Homey home automation. If you want more information on Particle devices go to [Particle](https://particle.io), or if you want to know more about Athom Homey then [Athom Homey](https://athom.com)
+
+## Getting Started
+
+NB: Work in Progress
+
+You'll need a Homey to make much use of this, so assuming you have one, you'll need to load up the Particle App. You can either get that from the Athom App Store (assuming I've successfully published it there - TODO) or you can load it manually using the Athom node.js CLI and grabbing it from github [athom-particledevice](https://github.com/specialcircumstances/athom-particledevice) 
+
+Once the Particle App is setup (see the instructions at [athom-particledevice](https://github.com/specialcircumstances/athom-particledevice) you will need to add this library to your Particle project. The library will be published soon to Particle so should be easy to include in your projects.
+
+
+## Usage
+
+
+```
+#include "athomdevice.h"
+
+Athomdevice myDevice; // Create ONE device.
+
+int myDimLevel = 0;
+bool myOnOff = false;
+
+// Your function to return a value on a Get from Homey, can be int, float or bool.
+bool getOnOffCallback() {
+  return myOnOff;
+}
+
+int getDimLevel() {
+  return myDimLevel;
+}
+
+// Your function to adjust something, e.g. a dim level on a light. 
+// Can be int, float or bool. Must accept one value, and return the actual set value
+// parameter and return type must be the same.
+
+bool setOnOffCallack(const bool myNewVal) {
+  myOnOff = myNewVal; // or actually do something
+  return myOnOff;
+}
+
+int setDimCallback(const int myNewVal) {
+  myDimLevel = myNewVal;  // or actually do something
+  return myOnOff;
+}
+
+
+// In setup you need to declare the number of "nodes", a class for each node, 
+// and what Homey capabilities each node supports.
+// Then attach the callbacks
+void setup() {
+  myDevice.setName("TESTY");
+  myDevice.addNode("light");
+  myDevice.addCapability(1,"onoff");
+  myDevice.setCapabilityGetCallback(1,"onoff",&getOnOffCallback);
+  myDevice.setCapabilitySetCallback(1,"onoff",&setOnOffCallback);
+  myDevice.addCapability(1,"dim");
+  myDevice.setCapabilityGetCallback(1,"dim",&getDimCallback);
+  myDevice.setCapabilitySetCallback(1,"dim",&setDimCallback);
+}
+
+void loop() {
+  myDevice.sendReport();  // This will trigger a report of all getable capabilities
+                          // NB, this assumes you don't set Homey to poll
+  delay(60000);           // wait 60 seconds until the next one.
+}
+```
+
+
+## Classes and Capabilties
+
+You must use known Homey classes and capabilities. See the [Driver Reference](https://developer.athom.com/docs/apps/tutorial-Drivers-Reference.html)
+
+
+
+## BELOW HERE BOILERPLATE
 
 ## Welcome to your library!
 
