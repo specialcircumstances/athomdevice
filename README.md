@@ -36,7 +36,7 @@ int getDimLevel() {
 // The parameter and return type MUST be the same.
 // This is a Homey "Set"
 
-bool setOnOffCallack(const bool myNewVal) {
+bool setOnOffCallback(const bool myNewVal) {
   myOnOff = myNewVal; // or actually do something
   return myOnOff;
 }
